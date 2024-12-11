@@ -25,7 +25,9 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.iceberg.CatalogUtil;
 import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.SupportsNamespaces;
+import org.apache.iceberg.catalog.TableIdentifier;
 
 import javax.inject.Inject;
 
@@ -109,6 +111,26 @@ public class IcebergNativeCatalogFactory
     public boolean isNestedNamespaceEnabled()
     {
         return false;
+    }
+
+    public boolean isCaseInsensitiveNameMatching()
+    {
+        return false;
+    }
+
+    public Cache<Namespace, Namespace> getRemoteNamespacesCache()
+    {
+        return null;
+    }
+
+    public Cache<TableIdentifier, TableIdentifier> getRemoteTablesCache()
+    {
+        return null;
+    }
+
+    public Cache<TableIdentifier, TableIdentifier> getRemoteViewsCache()
+    {
+        return null;
     }
 
     protected String getCacheKey(ConnectorSession session)

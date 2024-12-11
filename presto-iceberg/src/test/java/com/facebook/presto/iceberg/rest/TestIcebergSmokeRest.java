@@ -25,9 +25,9 @@ import com.facebook.presto.iceberg.IcebergDistributedSmokeTestBase;
 import com.facebook.presto.iceberg.IcebergNativeCatalogFactory;
 import com.facebook.presto.iceberg.IcebergQueryRunner;
 import com.facebook.presto.spi.ConnectorSession;
-import com.facebook.presto.spi.SchemaTableName;
 import com.facebook.presto.testing.QueryRunner;
 import org.apache.iceberg.Table;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.rest.RESTCatalog;
 import org.assertj.core.util.Files;
 import org.testng.annotations.AfterClass;
@@ -125,7 +125,7 @@ public class TestIcebergSmokeRest
         IcebergRestConfig restConfig = new IcebergRestConfig().setServerUri(serverUri);
         return getNativeIcebergTable(getCatalogFactory(restConfig),
                 session,
-                SchemaTableName.valueOf(schema + "." + tableName));
+                TableIdentifier.of(schema, tableName));
     }
 
     @Test

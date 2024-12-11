@@ -23,9 +23,9 @@ import com.facebook.presto.iceberg.IcebergDistributedSmokeTestBase;
 import com.facebook.presto.iceberg.IcebergNativeCatalogFactory;
 import com.facebook.presto.iceberg.IcebergUtil;
 import com.facebook.presto.spi.ConnectorSession;
-import com.facebook.presto.spi.SchemaTableName;
 import org.apache.hadoop.fs.Path;
 import org.apache.iceberg.Table;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.testng.annotations.Test;
 
 import static com.facebook.presto.iceberg.CatalogType.HADOOP;
@@ -71,6 +71,6 @@ public class TestIcebergSmokeHadoop
 
         return IcebergUtil.getNativeIcebergTable(catalogFactory,
                 session,
-                SchemaTableName.valueOf(schema + "." + tableName));
+                TableIdentifier.of(schema, tableName));
     }
 }

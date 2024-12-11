@@ -208,42 +208,48 @@ To use a REST catalog, configure the catalog type as
 
 Additional supported properties for the REST catalog:
 
-==================================================== ============================================================
-Property Name                                        Description
-==================================================== ============================================================
-``iceberg.rest.uri``                                 REST API endpoint URI (required).
-                                                     Example: ``https://localhost:8181``
+======================================================== ====================================================================
+Property Name                                            Description
+======================================================== ====================================================================
+``iceberg.rest.uri``                                         REST API endpoint URI (required).
+                                                             Example: ``https://localhost:8181``
 
-``iceberg.rest.auth.type``                           The authentication type to use.
-                                                     Available values are ``NONE`` or ``OAUTH2`` (default: ``NONE``).
-                                                     ``OAUTH2`` requires either a credential or token.
+``iceberg.rest.auth.type``                                   The authentication type to use.
+                                                             Available values are ``NONE`` or ``OAUTH2`` (default: ``NONE``).
+                                                             ``OAUTH2`` requires either a credential or token.
 
-``iceberg.rest.auth.oauth2.uri``                     OAUTH2 server endpoint URI.
-                                                     Example: ``https://localhost:9191``
+``iceberg.rest.auth.oauth2.uri``                             OAUTH2 server endpoint URI.
+                                                             Example: ``https://localhost:9191``
 
-``iceberg.rest.auth.oauth2.credential``              The credential to use for OAUTH2 authentication.
-                                                     Example: ``key:secret``
+``iceberg.rest.auth.oauth2.credential``                      The credential to use for OAUTH2 authentication.
+                                                             Example: ``key:secret``
 
-``iceberg.rest.auth.oauth2.token``                   The Bearer token to use for OAUTH2 authentication.
-                                                     Example: ``SXVLUXUhIExFQ0tFUiEK``
+``iceberg.rest.auth.oauth2.token``                           The Bearer token to use for OAUTH2 authentication.
+                                                             Example: ``SXVLUXUhIExFQ0tFUiEK``
 
-``iceberg.rest.auth.oauth2.scope``                   The scope to use for OAUTH2 authentication.
-                                                     This property is only applicable when using
-                                                     ``iceberg.rest.auth.oauth2.credential``.
-                                                     Example: ``PRINCIPAL_ROLE:ALL``
+``iceberg.rest.auth.oauth2.scope``                           The scope to use for OAUTH2 authentication.
+                                                             This property is only applicable when using
+                                                             ``iceberg.rest.auth.oauth2.credential``.
+                                                             Example: ``PRINCIPAL_ROLE:ALL``
 
-``iceberg.rest.nested.namespace.enabled``            In REST Catalogs, tables are grouped into namespaces, that can be
-                                                     nested. But if a large number of recursive namespaces result in
-                                                     lower performance, querying nested namespaces can be disabled.
-                                                     Defaults to ``true``.
+``iceberg.rest.nested.namespace.enabled``                    In REST Catalogs, tables are grouped into namespaces, that can be
+                                                             nested. But if a large number of recursive namespaces result in
+                                                             lower performance, querying nested namespaces can be disabled.
+                                                             Defaults to ``true``.
 
-``iceberg.rest.session.type``                        The session type to use when communicating with the REST catalog.
-                                                     Available values are ``NONE`` or ``USER`` (default: ``NONE``).
+``iceberg.rest.case-insensitive-name-matching``              Match namespaces, table and view names case-insensitively.
+                                                             Defaults to ``false``.
 
-``iceberg.catalog.warehouse``                        A catalog warehouse root path for Iceberg tables (optional).
-                                                     Example: ``s3://warehouse/``
+``iceberg.rest.case-insensitive-name-matching.cache-ttl``    Duration for which remote namespaces, table and view names will be
+                                                             cached. Set to ``0ms`` to disable the cache. Defaults to ``1m``.
 
-==================================================== ============================================================
+``iceberg.rest.session.type``                                The session type to use when communicating with the REST catalog.
+                                                             Available values are ``NONE`` or ``USER`` (default: ``NONE``).
+
+``iceberg.catalog.warehouse``                                A catalog warehouse root path for Iceberg tables (optional).
+                                                             Example: ``s3://warehouse/``
+
+======================================================== ====================================================================
 
 Hadoop catalog
 ^^^^^^^^^^^^^^

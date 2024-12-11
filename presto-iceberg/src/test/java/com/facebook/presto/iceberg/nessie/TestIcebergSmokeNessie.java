@@ -24,11 +24,11 @@ import com.facebook.presto.iceberg.IcebergNativeCatalogFactory;
 import com.facebook.presto.iceberg.IcebergQueryRunner;
 import com.facebook.presto.iceberg.IcebergUtil;
 import com.facebook.presto.spi.ConnectorSession;
-import com.facebook.presto.spi.SchemaTableName;
 import com.facebook.presto.testing.QueryRunner;
 import com.facebook.presto.testing.containers.NessieContainer;
 import com.facebook.presto.tests.DistributedQueryRunner;
 import org.apache.iceberg.Table;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -117,6 +117,6 @@ public class TestIcebergSmokeNessie
 
         return IcebergUtil.getNativeIcebergTable(catalogFactory,
                 session,
-                SchemaTableName.valueOf(schema + "." + tableName));
+                TableIdentifier.of(schema, tableName));
     }
 }

@@ -15,10 +15,14 @@ package com.facebook.presto.iceberg.rest;
 
 import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.ConfigDescription;
+import io.airlift.units.Duration;
+import io.airlift.units.MinDuration;
 
 import javax.validation.constraints.NotNull;
 
 import java.util.Optional;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class IcebergRestConfig
 {
@@ -30,6 +34,8 @@ public class IcebergRestConfig
     private String token;
     private String scope;
     private boolean nestedNamespaceEnabled = true;
+    private boolean caseInsensitiveNameMatching;
+    private Duration caseInsensitiveNameMatchingCacheTtl = new Duration(1, MINUTES);
 
     @NotNull
     public Optional<String> getServerUri()
@@ -133,6 +139,34 @@ public class IcebergRestConfig
     public IcebergRestConfig setNestedNamespaceEnabled(boolean nestedNamespaceEnabled)
     {
         this.nestedNamespaceEnabled = nestedNamespaceEnabled;
+        return this;
+    }
+
+    public boolean isCaseInsensitiveNameMatching()
+    {
+        return caseInsensitiveNameMatching;
+    }
+
+    @Config("iceberg.rest.case-insensitive-name-matching")
+    @ConfigDescription("Match namespaces table and view names case-insensitively")
+    public IcebergRestConfig setCaseInsensitiveNameMatching(boolean caseInsensitiveNameMatching)
+    {
+        this.caseInsensitiveNameMatching = caseInsensitiveNameMatching;
+        return this;
+    }
+
+    @NotNull
+    @MinDuration("0ms")
+    public Duration getCaseInsensitiveNameMatchingCacheTtl()
+    {
+        return caseInsensitiveNameMatchingCacheTtl;
+    }
+
+    @Config("iceberg.rest.case-insensitive-name-matching.cache-ttl")
+    @ConfigDescription("Duration for which remote namespaces, table and view names will be cached. Set to 0ms to disable the cache")
+    public IcebergRestConfig setCaseInsensitiveNameMatchingCacheTtl(Duration caseInsensitiveNameMatchingCacheTtl)
+    {
+        this.caseInsensitiveNameMatchingCacheTtl = caseInsensitiveNameMatchingCacheTtl;
         return this;
     }
 

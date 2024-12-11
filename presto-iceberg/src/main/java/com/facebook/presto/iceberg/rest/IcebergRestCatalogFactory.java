@@ -22,12 +22,17 @@ import com.facebook.presto.iceberg.IcebergNativeCatalogFactory;
 import com.facebook.presto.spi.ConnectorSession;
 import com.facebook.presto.spi.PrestoException;
 import com.facebook.presto.spi.security.ConnectorIdentity;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import io.airlift.units.Duration;
 import io.jsonwebtoken.Jwts;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.SessionCatalog.SessionContext;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.rest.HTTPClient;
 import org.apache.iceberg.rest.RESTCatalog;
 
@@ -45,6 +50,7 @@ import static com.google.common.base.Throwables.throwIfUnchecked;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.iceberg.CatalogProperties.URI;
 import static org.apache.iceberg.CatalogUtil.configureHadoopConf;
 import static org.apache.iceberg.rest.auth.OAuth2Properties.CREDENTIAL;
@@ -60,6 +66,11 @@ public class IcebergRestCatalogFactory
     private final NodeVersion nodeVersion;
     private final String catalogName;
     private final boolean nestedNamespaceEnabled;
+    private final boolean caseInsensitiveNameMatching;
+    private final Duration caseInsensitiveNameMatchingCacheTtl;
+    private final Cache<Namespace, Namespace> remoteNamespaces;
+    private final Cache<TableIdentifier, TableIdentifier> remoteTables;
+    private final Cache<TableIdentifier, TableIdentifier> remoteViews;
 
     @Inject
     public IcebergRestCatalogFactory(
@@ -75,6 +86,13 @@ public class IcebergRestCatalogFactory
         this.nodeVersion = requireNonNull(nodeVersion, "nodeVersion is null");
         this.catalogName = requireNonNull(catalogName, "catalogName is null").getCatalogName();
         this.nestedNamespaceEnabled = catalogConfig.isNestedNamespaceEnabled();
+        this.caseInsensitiveNameMatching = catalogConfig.isCaseInsensitiveNameMatching();
+        this.caseInsensitiveNameMatchingCacheTtl = catalogConfig.getCaseInsensitiveNameMatchingCacheTtl();
+        CacheBuilder<Object, Object> remoteNamesCacheBuilder = CacheBuilder.newBuilder()
+                .expireAfterWrite(caseInsensitiveNameMatchingCacheTtl.toMillis(), MILLISECONDS);
+        this.remoteNamespaces = remoteNamesCacheBuilder.build();
+        this.remoteTables = remoteNamesCacheBuilder.build();
+        this.remoteViews = remoteNamesCacheBuilder.build();
     }
 
     @Override
@@ -141,6 +159,30 @@ public class IcebergRestCatalogFactory
     public boolean isNestedNamespaceEnabled()
     {
         return this.nestedNamespaceEnabled;
+    }
+
+    @Override
+    public boolean isCaseInsensitiveNameMatching()
+    {
+        return this.caseInsensitiveNameMatching;
+    }
+
+    @Override
+    public Cache<Namespace, Namespace> getRemoteNamespacesCache()
+    {
+        return this.remoteNamespaces;
+    }
+
+    @Override
+    public Cache<TableIdentifier, TableIdentifier> getRemoteTablesCache()
+    {
+        return this.remoteTables;
+    }
+
+    @Override
+    public Cache<TableIdentifier, TableIdentifier> getRemoteViewsCache()
+    {
+        return this.remoteViews;
     }
 
     protected SessionContext convertSession(ConnectorSession session)

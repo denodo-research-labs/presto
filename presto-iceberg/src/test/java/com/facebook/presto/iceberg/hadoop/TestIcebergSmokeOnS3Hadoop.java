@@ -26,13 +26,13 @@ import com.facebook.presto.iceberg.IcebergNativeCatalogFactory;
 import com.facebook.presto.iceberg.IcebergQueryRunner;
 import com.facebook.presto.iceberg.container.IcebergMinIODataLake;
 import com.facebook.presto.spi.ConnectorSession;
-import com.facebook.presto.spi.SchemaTableName;
 import com.facebook.presto.testing.QueryRunner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HostAndPort;
 import org.apache.hadoop.fs.Path;
 import org.apache.iceberg.Table;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.intellij.lang.annotations.Language;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -357,7 +357,7 @@ public class TestIcebergSmokeOnS3Hadoop
 
         return getNativeIcebergTable(catalogFactory,
                 session,
-                SchemaTableName.valueOf(schema + "." + tableName));
+                TableIdentifier.of(schema, tableName));
     }
 
     protected Path getCatalogDirectory()

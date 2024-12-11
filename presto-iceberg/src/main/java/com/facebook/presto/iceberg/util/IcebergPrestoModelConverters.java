@@ -19,10 +19,11 @@ import com.google.common.base.Splitter;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 
-import java.util.Optional;
+import java.util.Arrays;
 
 import static com.facebook.presto.spi.StandardErrorCode.NOT_SUPPORTED;
 import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 
 public class IcebergPrestoModelConverters
 {
@@ -38,11 +39,16 @@ public class IcebergPrestoModelConverters
         return icebergNamespace.toString();
     }
 
-    public static Namespace toIcebergNamespace(Optional<String> prestoSchemaName, boolean nestedNamespaceEnabled)
+    public static Namespace toPrestoNamespace(Namespace namespace)
     {
-        if (prestoSchemaName.isPresent()) {
-            checkNestedNamespaceSupport(prestoSchemaName.get(), nestedNamespaceEnabled);
-            return Namespace.of(NAMESPACE_SPLITTER.splitToList(prestoSchemaName.get()).toArray(new String[0]));
+        return Namespace.of(Arrays.stream(namespace.levels()).map(level -> level.toLowerCase(ENGLISH)).toArray(String[]::new));
+    }
+
+    public static Namespace toIcebergNamespace(String prestoSchemaName, boolean nestedNamespaceEnabled)
+    {
+        if (prestoSchemaName != null) {
+            checkNestedNamespaceSupport(prestoSchemaName, nestedNamespaceEnabled);
+            return Namespace.of(NAMESPACE_SPLITTER.splitToList(prestoSchemaName).toArray(new String[0]));
         }
         return Namespace.empty();
     }
@@ -56,7 +62,7 @@ public class IcebergPrestoModelConverters
 
     public static TableIdentifier toIcebergTableIdentifier(SchemaTableName prestoSchemaTableName, boolean nestedNamespaceEnabled)
     {
-        return toIcebergTableIdentifier(toIcebergNamespace(Optional.ofNullable(prestoSchemaTableName.getSchemaName()), nestedNamespaceEnabled),
+        return toIcebergTableIdentifier(toIcebergNamespace(prestoSchemaTableName.getSchemaName(), nestedNamespaceEnabled),
                 prestoSchemaTableName.getTableName(), nestedNamespaceEnabled);
     }
 

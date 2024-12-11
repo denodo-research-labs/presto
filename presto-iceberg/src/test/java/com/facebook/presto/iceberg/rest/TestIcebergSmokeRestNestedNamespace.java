@@ -26,11 +26,11 @@ import com.facebook.presto.iceberg.IcebergConfig;
 import com.facebook.presto.iceberg.IcebergNativeCatalogFactory;
 import com.facebook.presto.iceberg.IcebergQueryRunner;
 import com.facebook.presto.spi.ConnectorSession;
-import com.facebook.presto.spi.SchemaTableName;
 import com.facebook.presto.testing.QueryRunner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.Table;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.assertj.core.util.Files;
 import org.intellij.lang.annotations.Language;
 import org.testng.annotations.AfterClass;
@@ -149,7 +149,7 @@ public class TestIcebergSmokeRestNestedNamespace
         IcebergRestConfig restConfig = new IcebergRestConfig().setServerUri(serverUri);
         return getNativeIcebergTable(getCatalogFactory(restConfig),
                 session,
-                new SchemaTableName(schema, tableName));
+                TableIdentifier.of(schema, tableName));
     }
 
     @Test
